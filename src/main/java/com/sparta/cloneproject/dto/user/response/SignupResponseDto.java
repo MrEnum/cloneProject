@@ -1,4 +1,4 @@
-package com.sparta.cloneproject.controller.dto.user.response;
+package com.sparta.cloneproject.dto.user.response;
 
 import lombok.Data;
 
