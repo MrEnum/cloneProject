@@ -7,6 +7,7 @@ import com.sparta.cloneproject.domain.User;
 import com.sparta.cloneproject.dto.social.KakaoUserInfoDto;
 import com.sparta.cloneproject.repository.UserRepository;
 import com.sparta.cloneproject.security.UserDetailsImpl;
+import com.sparta.cloneproject.security.jwt.JwtTokenUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -14,13 +15,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
 
 @Service
@@ -28,22 +29,26 @@ public class KakaoService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final HttpServletResponse servletResponse;
 
-    public KakaoService(UserRepository userRepository, PasswordEncoder passwordEncoder){
+    public KakaoService(
+            UserRepository userRepository,
+            PasswordEncoder passwordEncoder,
+            HttpServletResponse servletResponse){
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.servletResponse = servletResponse;
     }
 
     public void kakaoLogin(String code) throws JsonProcessingException {
         // 1. "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getAccessToken(code);
-
+        System.out.println(accessToken);
         // 2. 토큰으로 카카오 API 호출
         KakaoUserInfoDto kakaoUserInfoDto = getKakaoUserInfo(accessToken);
-
+        System.out.println(kakaoUserInfoDto.getNickname());
         // 3. kakaoID DB에 존재 여부 확인
         User kakaoUser = userRepository.findByKakaoId(kakaoUserInfoDto.getId()).orElse(null);
-
         // 3-2. 카카오 아이디가 DB에 없으면 회원 가입하기
         if(kakaoUser == null){
 
@@ -58,10 +63,13 @@ public class KakaoService {
         }
 
         // 4. 강제 로그인 처리   // 구조 이해하고 넘어 가기 by.민수
-        UserDetails userDetails = new UserDetailsImpl(kakaoUser);
+        UserDetailsImpl userDetails = new UserDetailsImpl(kakaoUser);
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
+        // JWT토큰 헤더에 생성
+        String token = JwtTokenUtils.generateJwtToken(userDetails);
+        servletResponse.addHeader("Authorization", "Bearer " + token);
 
     }
 
@@ -129,8 +137,6 @@ public class KakaoService {
 
         return new KakaoUserInfoDto(id, nickname, email);
     }
-
-
 
 
 }
