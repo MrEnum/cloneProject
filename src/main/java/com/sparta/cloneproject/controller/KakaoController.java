@@ -25,6 +25,5 @@ public class KakaoController {
         return "redirect:/";  // 로그인 성공 시 처리 방법 협의 필요.
     }
 
-    // 2-15 25:42
 
 }

@@ -1,6 +1,7 @@
 package com.sparta.cloneproject.domain;
 
-import com.sparta.cloneproject.controller.dto.user.request.SignupRequestDto;
+import com.sparta.cloneproject.dto.social.KakaoUserInfoDto;
+import com.sparta.cloneproject.dto.user.request.SignupRequestDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -15,10 +16,10 @@ public class User {
     @Id
     private Long id;
 
-    @Column(nullable = false)
+    @Column
     private String firstName;
 
-    @Column(nullable = false)
+    @Column
     private String lastName;
 
     @Column(nullable = false, unique = true)
@@ -30,6 +31,9 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @Column(unique = true)
+    private Long kakaoId;
+
 
     public User(SignupRequestDto signupRequestDto, String password) {
         this.firstName = signupRequestDto.getFirstName();
@@ -37,5 +41,17 @@ public class User {
         this.userEmail = signupRequestDto.getUserEmail();
         this.userName = signupRequestDto.getUserName();
         this.password = password;
+        this.kakaoId = null;
     }
+
+    public User(KakaoUserInfoDto userInfoDto, String password) {
+        this.firstName = null;
+        this.lastName = null;
+        this.userEmail = userInfoDto.getEmail();
+        this.userName = userInfoDto.getNickname();
+        this.password = password;
+        this.kakaoId = userInfoDto.getId();
+    }
+
+
 }

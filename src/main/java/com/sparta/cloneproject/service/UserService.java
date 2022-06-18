@@ -1,8 +1,8 @@
 package com.sparta.cloneproject.service;
 
 import com.sparta.cloneproject.domain.User;
-import com.sparta.cloneproject.controller.dto.user.request.SignupRequestDto;
-import com.sparta.cloneproject.controller.dto.user.response.SignupResponseDto;
+import com.sparta.cloneproject.dto.user.request.SignupRequestDto;
+import com.sparta.cloneproject.dto.user.response.SignupResponseDto;
 import com.sparta.cloneproject.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
