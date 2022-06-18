@@ -1,7 +1,7 @@
 package com.sparta.cloneproject.controller;
 
-import com.sparta.cloneproject.controller.dto.user.request.SignupRequestDto;
-import com.sparta.cloneproject.controller.dto.user.response.SignupResponseDto;
+import com.sparta.cloneproject.dto.user.request.SignupRequestDto;
+import com.sparta.cloneproject.dto.user.response.SignupResponseDto;
 import com.sparta.cloneproject.service.UserService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -10,10 +10,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import javax.validation.Valid;
 
-
-@RestController
 @Slf4j
+@RestController
 public class UserController {
 
     private final UserService userService;
@@ -27,7 +27,7 @@ public class UserController {
 
     // 회원 가입 요청 처리
     @PostMapping("/user/signup")
-    public ResponseEntity<SignupResponseDto> registerUser(@RequestBody SignupRequestDto signupRequestDto) {
+    public ResponseEntity<SignupResponseDto> registerUser(@Valid @RequestBody  SignupRequestDto signupRequestDto) {
 
         return userService.registerUser(signupRequestDto);
     }

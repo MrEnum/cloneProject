@@ -24,8 +24,6 @@
             <AppenderRef ref="ConsoleLog" />
             <AppenderRef ref="FileLog" />
         </Root>
-        <Logger name="com.sparta.cloneproject.controller" level="debug">
-            <AppenderRef ref="ConsoleLog" />
-        </Logger>
+
     </Loggers>
 </Configuration>

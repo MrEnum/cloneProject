@@ -36,8 +36,12 @@ dependencies {
 	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 	implementation 'commons-codec:commons-codec:1.13'
 
-//	logging
+	logging
 	implementation 'org.springframework.boot:spring-boot-starter-log4j2'
+
+	Validator
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
 }
 
 configurations {

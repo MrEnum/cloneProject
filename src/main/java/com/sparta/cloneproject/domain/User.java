@@ -1,6 +1,6 @@
 package com.sparta.cloneproject.domain;
 
-import com.sparta.cloneproject.controller.dto.user.request.SignupRequestDto;
+import com.sparta.cloneproject.dto.user.request.SignupRequestDto;
 import lombok.*;
 
 import javax.persistence.*;
