@@ -36,11 +36,15 @@ dependencies {
 	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 	implementation 'commons-codec:commons-codec:1.13'
 
-	logging
+//	logging
 	implementation 'org.springframework.boot:spring-boot-starter-log4j2'
 
-	Validator
+//	Validator
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-mail
+//	이메일
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.2.6.RELEASE'
 
 }
 

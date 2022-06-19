@@ -15,27 +15,28 @@ public class User {
     @Id
     private Long id;
 
-    @Column(nullable = false)
-    private String firstName;
-
-    @Column(nullable = false)
-    private String lastName;
+    @Column
+    private String fullName;
 
     @Column(nullable = false, unique = true)
     private String userEmail;
 
-    @Column(nullable = false)
+    @Column
     private String userName;
 
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private UserConfirmEnum userConfirmEnum;
+
 
     public User(SignupRequestDto signupRequestDto, String password) {
-        this.firstName = signupRequestDto.getFirstName();
-        this.lastName = signupRequestDto.getLastName();
+        this.fullName = signupRequestDto.getFullName();
         this.userEmail = signupRequestDto.getUserEmail();
         this.userName = signupRequestDto.getUserName();
         this.password = password;
+        this.userConfirmEnum = UserConfirmEnum.BEFORE_CONFIRM;
     }
 }
