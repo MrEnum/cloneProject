@@ -3,6 +3,7 @@ package com.sparta.cloneproject.controller;
 import com.sparta.cloneproject.dto.user.request.SignupRequestDto;
 import com.sparta.cloneproject.dto.user.request.UserInfoRequestDto;
 import com.sparta.cloneproject.dto.user.response.SignupResponseDto;
+
 import com.sparta.cloneproject.service.UserService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -12,8 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-@Slf4j
 @RestController
+@Slf4j
 public class UserController {
 
     private final UserService userService;
