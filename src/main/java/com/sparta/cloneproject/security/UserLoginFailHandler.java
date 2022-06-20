@@ -7,10 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.cloneproject.dto.user.response.LoginResponseDto;
-import org.springframework.security.authentication.AuthenticationServiceException;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.CredentialsExpiredException;
-import org.springframework.security.authentication.LockedException;
+import org.apache.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.stereotype.Service;
@@ -43,11 +40,13 @@ public class UserLoginFailHandler implements AuthenticationFailureHandler {
 //            loginResponseDto.setMessage("아이디 또는 비밀번호가 틀립니다.");
 //        }
 //
-//      클론 프로젝트 로그인 실패는 1종류 -RunTimeException = IOException
+
+//      클론 프로젝트 로그인 실패는 1종류
         loginResponseDto.setSuccess(false);
         loginResponseDto.setMessage("로그인 실패");
 
         String result = mapper.writeValueAsString(loginResponseDto);
         response.getWriter().write(result);
+        response.setStatus(HttpStatus.SC_BAD_REQUEST);
     }
 }
