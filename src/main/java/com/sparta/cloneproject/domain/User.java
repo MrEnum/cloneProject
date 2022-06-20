@@ -50,6 +50,7 @@ public class User {
         this.userEmail = userInfoDto.getEmail();
         this.userName = userInfoDto.getNickname();
         this.password = password;
+        this.userConfirmEnum = UserConfirmEnum.OK_CONFIRM;
         this.kakaoId = userInfoDto.getId();
     }
 

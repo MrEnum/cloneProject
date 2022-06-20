@@ -43,10 +43,8 @@ public class KakaoService {
     public void kakaoLogin(String code) throws JsonProcessingException {
         // 1. "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getAccessToken(code);
-        System.out.println(accessToken);
         // 2. 토큰으로 카카오 API 호출
         KakaoUserInfoDto kakaoUserInfoDto = getKakaoUserInfo(accessToken);
-        System.out.println(kakaoUserInfoDto.getNickname());
         // 3. kakaoID DB에 존재 여부 확인
         User kakaoUser = userRepository.findByKakaoId(kakaoUserInfoDto.getId()).orElse(null);
         // 3-2. 카카오 아이디가 DB에 없으면 회원 가입하기
@@ -85,7 +83,7 @@ public class KakaoService {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", "366bf4df105f7d1fb0c91cb6b4faeba0");   // Rest API Key
-        body.add("redirect_uri", "http://localhost:8080/user/signin/kakao");  // 콜백 주소 ***** 배포시 수정 필요 *****
+        body.add("redirect_uri", "http://13.125.251.80/user/signin/kakao");  // 콜백 주소 ***** 배포시 수정 필요 *****
         body.add("code", code);
 
         // HTTP 요청 보내기
@@ -140,33 +138,4 @@ public class KakaoService {
 
 
 }
-
-/*
-    카카오 사용자 정보 예시
-    {
-        "id": 1632335751,
-        "properties":
-        {
-            "nickname": "르탄이",
-            "profile_image": "http://k.kakaocdn.net/...jpg",
-            "thumbnail_image": "http://k.kakaocdn.net/...jpg"
-        },
-        "kakao_account":
-        {
-            "profile_needs_agreement": false,
-            "profile":
-            {
-                "nickname": "르탄이",
-                "thumbnail_image_url": "http://k.kakaocdn.net/...jpg",
-                "profile_image_url": "http://k.kakaocdn.net/...jpg"
-            },
-            "has_email": true,
-            "email_needs_agreement": false,
-            "is_email_valid": true,
-            "is_email_verified": true,
-            "email": "letan@sparta.com"
-        }
-    }
- */
-
 
