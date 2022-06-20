@@ -2,13 +2,14 @@ package com.sparta.cloneproject.domain;
 
 import com.sparta.cloneproject.dto.post.PostRequestDto;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 
 @Setter
 @Getter // get 함수를 일괄적으로 만들어줍니다.
-//@NoArgsConstructor // 기본 생성자를 만들어줍니다.
+@NoArgsConstructor // 기본 생성자를 만들어줍니다.
 @Entity // DB 테이블 역할을 합니다.
 public class Post {
 
@@ -24,8 +25,8 @@ public class Post {
     @Column(nullable = false)
     private String description;
 
-    @Column(nullable = false)
-    private String emailUrl;
+    @Column
+    private String imageUrl;
 
 //    @Column(nullable = false)
 //    private String fileName;
@@ -39,6 +40,7 @@ public class Post {
 //    private List<Folder> folderList;
 
     public Post(PostRequestDto postRequestDto, User user){
+        this.imageUrl = postRequestDto.getImageUrl();
         this.title = postRequestDto.getTitle();
         this.description = postRequestDto.getDescription();
         this.user = user;
