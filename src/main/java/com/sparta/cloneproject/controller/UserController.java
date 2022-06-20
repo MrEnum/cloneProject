@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 @RestController
@@ -33,11 +34,5 @@ public class UserController {
     }
 
     // 이메일 인증
-    @GetMapping("/confirm-email")
-    public String viewConfirmEmail(@Valid @RequestParam String token) {
-        userService.confirmEmail(token);
 
-        return "이메일 인증 완료";
-
-    }
 }
