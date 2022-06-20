@@ -22,7 +22,6 @@ public class ConfirmationTokenService {
 
     public void createEmailConfirmationToken(String receiverEmail) {
 
-        Assert.hasText(receiverEmail, "receiverEmail은 필수 입니다.");
 
         ConfirmationToken emailConfirmationToken = ConfirmationToken.createEmailConfirmationToken(receiverEmail);
         confirmationTokenRepository.save(emailConfirmationToken);
@@ -30,7 +29,7 @@ public class ConfirmationTokenService {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(receiverEmail);
         mailMessage.setSubject("회원가입 이메일 인증");
-        mailMessage.setText("http://localhost:8080/confirm-email?token=" + emailConfirmationToken.getId());
+        mailMessage.setText("인증 링크 : "+"http://localhost:8080/confirm-email?token=" + emailConfirmationToken.getId());
         emailSenderService.sendEmail(mailMessage);
 
     }

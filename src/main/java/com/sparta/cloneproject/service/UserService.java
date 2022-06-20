@@ -5,7 +5,7 @@ import com.sparta.cloneproject.domain.User;
 import com.sparta.cloneproject.domain.UserConfirmEnum;
 import com.sparta.cloneproject.dto.user.request.SignupRequestDto;
 import com.sparta.cloneproject.dto.user.request.UserInfoRequestDto;
-import com.sparta.cloneproject.dto.user.response.SignupResponseDto;
+import com.sparta.cloneproject.dto.user.response.LoginResponseDto;
 import com.sparta.cloneproject.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import javax.validation.constraints.Null;
 import java.util.Optional;
 
 
@@ -32,8 +31,8 @@ public class UserService {
         this.confirmationTokenService = confirmationTokenService;
     }
     @Transactional
-    public ResponseEntity<SignupResponseDto> registerUser(UserInfoRequestDto userInfoRequestDto) {
-        SignupResponseDto signupResponseDto = new SignupResponseDto();
+    public ResponseEntity<LoginResponseDto> registerUser(UserInfoRequestDto userInfoRequestDto) {
+        LoginResponseDto signupResponseDto = new LoginResponseDto();
         SignupRequestDto signupRequestDto = userInfoRequestDto.getUserInfo();
 
         if (userRepository.findByUserEmail(signupRequestDto.getUserEmail()).isPresent()) {
