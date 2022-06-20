@@ -35,9 +35,11 @@ public class S3Service {
     //("${iamSecretKey}")
     private String secretKey;
 
-    private final String region = "ap-northeast-2";//지역설정
+    @Value("${region}")
+    private String region;//지역설정
 
-    private final String bucket = "soochan2-bucket";
+    @Value("${S3Bucket}")
+    private String bucket;
 
     @PostConstruct
     public void setS3Client() {
