@@ -1,7 +1,7 @@
 plugins {
-	id 'org.springframework.boot' version '2.7.0'
-	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-	id 'java'
+    id 'org.springframework.boot' version '2.7.0'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
 }
 
 group = 'com.sparta'
@@ -48,11 +48,14 @@ dependencies {
 //	Validator
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-mail
 //	이메일
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.2.6.RELEASE'
 //s3
-	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+    //Timestamped
+   //compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.10'
+
 }
 
 configurations {
