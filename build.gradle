@@ -19,17 +19,22 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    compileOnly 'org.projectlombok:lombok'
-    runtimeOnly 'com.h2database:h2'
-    runtimeOnly 'mysql:mysql-connector-java'
-    annotationProcessor 'org.projectlombok:lombok'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-    // OAuth2
-    implementation group: 'org.springframework.security.oauth', name: 'spring-security-oauth2', version: '2.5.2.RELEASE'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	compileOnly 'org.projectlombok:lombok'
+	runtimeOnly 'com.h2database:h2'
+	runtimeOnly 'mysql:mysql-connector-java'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	// OAuth2 : 이번 프로젝트에 사용안함
+	implementation group: 'org.springframework.security.oauth', name: 'spring-security-oauth2', version: '2.5.2.RELEASE'
+
+
+	//AOP
+//	implementation "org.springframework.boot:spring-boot-starter-aop"
 
 //	JWT
     compileOnly 'com.auth0:java-jwt:3.13.0'
@@ -45,7 +50,8 @@ dependencies {
 //	Validator
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-mail
+
+
 //	이메일
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.2.6.RELEASE'
 //s3

@@ -17,6 +17,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsUtils;
 
@@ -32,10 +33,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final JWTAuthProvider jwtAuthProvider;
     private final HeaderTokenExtractor headerTokenExtractor;
 
-    public WebSecurityConfig(JWTAuthProvider jwtAuthProvider, HeaderTokenExtractor headerTokenExtractor
-    ) {
+    private final AuthenticationFailureHandler customFailureHandler;
+
+    public WebSecurityConfig(JWTAuthProvider jwtAuthProvider, HeaderTokenExtractor headerTokenExtractor,
+                             AuthenticationFailureHandler customFailureHandler) {
         this.jwtAuthProvider = jwtAuthProvider;
         this.headerTokenExtractor = headerTokenExtractor;
+        this.customFailureHandler = customFailureHandler;
     }
 
     @Bean
@@ -68,7 +72,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.headers().frameOptions().disable();
 
-        http.addFilterBefore(formLoginFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(formLoginFilter(), UsernamePasswordAuthenticationFilter.class).exceptionHandling();
 
         http.authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
@@ -89,8 +93,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         FormLoginFilter formLoginFilter = new FormLoginFilter(authenticationManager());
         formLoginFilter.setFilterProcessesUrl("/user/login");
         formLoginFilter.setAuthenticationSuccessHandler(formLoginSuccessHandler());
+        formLoginFilter.setAuthenticationFailureHandler(formLoginFailHandler());
         formLoginFilter.afterPropertiesSet();
         return formLoginFilter;
+    }
+
+    @Bean
+    public UserLoginFailHandler formLoginFailHandler(){
+        return new UserLoginFailHandler();
     }
 
 
@@ -115,10 +125,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // h2-console 허용
         skipPathList.add("GET,/h2-console/**");
         skipPathList.add("POST,/h2-console/**");
+
         // 회원 관리 API 허용
         skipPathList.add("GET,/user/**");
         skipPathList.add("POST,/user/signup");
         skipPathList.add("GET,/confirm-email");
+        skipPathList.add("GET,/page");
 
         skipPathList.add("POST,/user/login");
 
