@@ -54,6 +54,7 @@ public class PostService {
             postResponseDtos.add(postResponseDto);
         }
         return postResponseDtos;
+
     }
     //게시글 카테고리별 조회
 
@@ -89,5 +90,6 @@ public class PostService {
         //DB업데이트
         post.update(postRequestDto);
         postRepository.save(post);
+
     }
 }
