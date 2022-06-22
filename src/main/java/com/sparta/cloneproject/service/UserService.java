@@ -37,15 +37,17 @@ public class UserService {
         LoginResponseDto signupResponseDto = new LoginResponseDto();
         SignupRequestDto signupRequestDto = userInfoRequestDto.getUserInfo();
 
+//      ID 중복 체크
         if (userRepository.findByUserEmail(signupRequestDto.getUserEmail()).isPresent()) {
             throw new UserApiException("중복된 아이디가 포함되어 있습니다.");
         }
-
+//      PW Hash
         String password = passwordEncoder.encode(signupRequestDto.getPassword());
         User user = new User(signupRequestDto, password);
 
-//        Email 전송 및 DB저장
+//      Email 전송
         confirmationTokenService.createEmailConfirmationToken(signupRequestDto.getUserEmail());
+//      DB 저장
         userRepository.save(user);
 
 
@@ -58,11 +60,12 @@ public class UserService {
     public void confirmEmail(String token) {
         ConfirmationToken findConfirmationToken = confirmationTokenService.findByIdAndExpirationDateAfterAndExpired(token);
         Optional<User> findUserInfo = userRepository.findByUserEmail(findConfirmationToken.getUserEmail());
-        findConfirmationToken.useToken();    // 토큰 만료 로직
+        findConfirmationToken.useToken();    // 토큰 만료
 
         if (!findUserInfo.isPresent()) {
             throw new UserApiException("잘못된 토큰값");
         }
+//      User Confirm 정보 'OK' 로 변경
         findUserInfo.get().setUserConfirmEnum(UserConfirmEnum.OK_CONFIRM);
     }
 }
