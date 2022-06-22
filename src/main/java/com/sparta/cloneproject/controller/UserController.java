@@ -31,6 +31,6 @@ public class UserController {
         return userService.registerUser(userInfoRequestDto);
     }
 
-    // 이메일 인증
+
 
 }
