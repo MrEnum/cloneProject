@@ -1,5 +1,6 @@
 package com.sparta.cloneproject.service;
 
+import com.sparta.cloneproject.aop.exception.UserApiException;
 import com.sparta.cloneproject.domain.ConfirmationToken;
 import com.sparta.cloneproject.domain.User;
 import com.sparta.cloneproject.domain.UserConfirmEnum;
@@ -30,15 +31,14 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
         this.confirmationTokenService = confirmationTokenService;
     }
+
     @Transactional
     public ResponseEntity<LoginResponseDto> registerUser(UserInfoRequestDto userInfoRequestDto) {
         LoginResponseDto signupResponseDto = new LoginResponseDto();
         SignupRequestDto signupRequestDto = userInfoRequestDto.getUserInfo();
 
         if (userRepository.findByUserEmail(signupRequestDto.getUserEmail()).isPresent()) {
-            signupResponseDto.setSuccess(false);
-            signupResponseDto.setMessage("중복된 아이디가 포함되어 있습니다.");
-            return ResponseEntity.badRequest().body(signupResponseDto);
+            throw new UserApiException("중복된 아이디가 포함되어 있습니다.");
         }
 
         String password = passwordEncoder.encode(signupRequestDto.getPassword());
@@ -61,7 +61,7 @@ public class UserService {
         findConfirmationToken.useToken();    // 토큰 만료 로직
 
         if (!findUserInfo.isPresent()) {
-            throw new IllegalArgumentException("잘못된 토큰값");
+            throw new UserApiException("잘못된 토큰값");
         }
         findUserInfo.get().setUserConfirmEnum(UserConfirmEnum.OK_CONFIRM);
     }
