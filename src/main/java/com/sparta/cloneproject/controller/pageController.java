@@ -25,7 +25,7 @@ public class pageController {
 
 
     @GetMapping("/page")
-    public void kakaoLogin(HttpServletResponse httpServletResponse) {
+    public void viewRedirect(HttpServletResponse httpServletResponse) {
         httpServletResponse.setHeader("Location", "https://naver.com");
         httpServletResponse.setStatus(302);
     }
