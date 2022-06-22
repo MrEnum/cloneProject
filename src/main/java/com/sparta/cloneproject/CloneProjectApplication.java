@@ -5,11 +5,13 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScans;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 // Email Enable 비동기
 @Slf4j
+@EnableJpaAuditing
 @SpringBootApplication
 public class CloneProjectApplication {
 

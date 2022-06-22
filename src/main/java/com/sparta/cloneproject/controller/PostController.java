@@ -1,11 +1,11 @@
 package com.sparta.cloneproject.controller;
 
 import com.sparta.cloneproject.domain.Post;
-import com.sparta.cloneproject.dto.post.PostRequestDto;
-import com.sparta.cloneproject.dto.post.PostResponseDto;
+import com.sparta.cloneproject.dto.post.*;
 import com.sparta.cloneproject.repository.PostRepository;
 import com.sparta.cloneproject.security.UserDetailsImpl;
 import com.sparta.cloneproject.service.PostService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,7 +38,28 @@ public class PostController {
     public List<PostResponseDto> getAllPosts() {
         return postService.getAllpost();
     }
-    //게시글 카테고리별 전체 조회
+
+
+    // 무한스크롤 적용 게시글 전체 조회
+    @GetMapping("/posts/pagination")
+    public ResponseEntity<List<PostResponseDto>> getPostsPages(@RequestBody PagesRequestDto requestDto) {
+        return ResponseEntity.ok().body(postService.getPostsPages(requestDto));
+    }
+
+
+    //게시글 폴더 설정
+    @PostMapping("/posts/{postId}/folder")
+    public void createFolder(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long postId, @RequestBody FolderRequestDto requestDto){
+        postService.createFolder(userDetails.getUser().getId(), postId, requestDto);
+    }
+
+
+    // 내가 가지고 있는 특정 폴더 전체 조회
+    @GetMapping("/posts/{folder}/mine")
+    public List<FolderResponseDto> getFolderPosts(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable String folder){
+        return postService.getFolderPosts(userDetails.getUser().getId(), folder);
+    }
+
 
     //게시글 디테일 조회
     @GetMapping("/posts/{postId}")

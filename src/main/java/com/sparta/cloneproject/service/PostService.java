@@ -1,13 +1,17 @@
 package com.sparta.cloneproject.service;
 
 import com.sparta.cloneproject.aop.exception.PostApiException;
+import com.sparta.cloneproject.domain.Folder;
 import com.sparta.cloneproject.domain.Post;
 import com.sparta.cloneproject.domain.User;
-import com.sparta.cloneproject.dto.post.PostRequestDto;
-import com.sparta.cloneproject.dto.post.PostResponseDto;
+import com.sparta.cloneproject.dto.post.*;
+import com.sparta.cloneproject.repository.FolderRepository;
+import com.sparta.cloneproject.repository.Mapping.PostMapping;
 import com.sparta.cloneproject.repository.PostRepository;
 import com.sparta.cloneproject.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,12 +24,15 @@ public class PostService {
     private final S3Service s3Service;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final FolderRepository folderRepository;
+
 
     @Autowired
-    public PostService(S3Service s3Service, PostRepository postRepository, UserRepository userRepository) {
+    public PostService(S3Service s3Service, PostRepository postRepository, UserRepository userRepository, FolderRepository folderRepository) {
         this.s3Service = s3Service;
         this.postRepository = postRepository;
         this.userRepository = userRepository;
+        this.folderRepository = folderRepository;
     }
     //게시글 작성
     public void createPost(PostRequestDto postRequestDto, Long userId, MultipartFile file) {
@@ -56,6 +63,7 @@ public class PostService {
         return postResponseDtos;
 
     }
+
     //게시글 카테고리별 조회
 
     //게시글 삭제
@@ -92,4 +100,53 @@ public class PostService {
         postRepository.save(post);
 
     }
+
+
+    // 폴더 생성 (생성시 지정한 게시글 즉시 추가)
+    public void createFolder(Long userId, Long postId, FolderRequestDto requestDto) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new PostApiException("권한이 없습니다."));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new PostApiException("없는 게시물 입니다."));
+
+        // 폴더명 중복 확인
+        Boolean isSameFolderName = folderRepository.existsByUserIdAndFolder(userId, requestDto.getFolder());
+        if(isSameFolderName){
+            throw new PostApiException("폴더명이 존재 합니다.");
+        }
+
+        Folder folder = new Folder(requestDto.getFolder(), post, user);
+        folderRepository.save(folder);  // DB에 새로운 폴더 저장
+
+    }
+
+
+    // 내가 가지고 있는 특정 폴더 전체 조회
+    public List<FolderResponseDto> getFolderPosts(Long userId, String folderName) {
+        // 유저 아이디와 폴더명 2개 모두 일치하는 게시물만 불러오기
+        List<PostMapping> posts = folderRepository.findAllByUserIdAndFolder(userId, folderName);
+        List<FolderResponseDto> responseDtos = new ArrayList<>();
+        for(PostMapping post : posts){
+            // 응답용 DTO에 제 배치
+            responseDtos.add(new FolderResponseDto(post.getPost(), folderName));
+        }
+        return responseDtos;
+    }
+
+
+    // Infinite Scrolling Pagination
+    public List<PostResponseDto> getPostsPages(PagesRequestDto requestDto) {
+        // 불러올 페이지 조건 설정
+        PageRequest pageRequest = PageRequest.of(0, requestDto.getSize(), Sort.by("modifiedAt").descending());
+        // 조건에 맞춰 DB에서 불러오기
+        List<Post> posts = postRepository.findByIdLessThanOrderByIdDesc(requestDto.getLastPostId(), pageRequest).getContent();
+
+        List<PostResponseDto> postResponseDtos = new ArrayList<>();
+        for(Post post : posts){
+            // 응답용 DTO에 제 배치
+            postResponseDtos.add(new PostResponseDto(post.getImageUrl(), post.getDescription(), post.getId()));
+        }
+
+        return postResponseDtos;
+    }
+
+
 }
