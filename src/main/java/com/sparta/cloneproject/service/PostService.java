@@ -1,5 +1,6 @@
 package com.sparta.cloneproject.service;
 
+import com.sparta.cloneproject.aop.exception.PostApiException;
 import com.sparta.cloneproject.domain.Post;
 import com.sparta.cloneproject.domain.User;
 import com.sparta.cloneproject.dto.post.PostRequestDto;
@@ -27,7 +28,7 @@ public class PostService {
     //게시글 작성
     public void createPost(PostRequestDto postRequestDto, Long userId, MultipartFile file) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new IllegalArgumentException("등록되지 않은 사용자입니다.")
+                () -> new PostApiException("요청하신 작업이 실패했습니다")
         );
 
         if (file.isEmpty()) {
@@ -38,6 +39,7 @@ public class PostService {
         }
         Post post = postRepository.save(new Post(postRequestDto, user));
     }
+
     //게시글 전체 조회
     public List<PostResponseDto> getAllpost(){
         List<PostResponseDto> postResponseDtos = new ArrayList<>();
@@ -49,8 +51,6 @@ public class PostService {
             PostResponseDto postResponseDto = new PostResponseDto(imageUrl,description, post.getId());
             postResponseDtos.add(postResponseDto);
         }
-
-
         return postResponseDtos;
     }
 }
