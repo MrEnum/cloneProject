@@ -64,28 +64,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable();
-
-        // 서버에서 인증은 JWT로 인증하기 때문에 Session의 생성을 막습니다.
-        http
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.headers().frameOptions().disable();
 
-        http.addFilterBefore(formLoginFilter(), UsernamePasswordAuthenticationFilter.class).exceptionHandling();
+        http.addFilterBefore(formLoginFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
+
 
         http.authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                .anyRequest()
-                .permitAll()
             .and()
                 .cors()
             .and()
                 .exceptionHandling()
                 // "접근 불가" 페이지 URL 설정
-                .accessDeniedPage("/forbidden.html")
-            .and()
-                .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
+                .accessDeniedPage("/forbidden.html");
     }
 
     @Bean
@@ -103,7 +96,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new UserLoginFailHandler();
     }
 
-
     @Bean
     public FormLoginSuccessHandler formLoginSuccessHandler() {
         return new FormLoginSuccessHandler();
@@ -117,26 +109,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private JwtAuthFilter jwtFilter() throws Exception {
         List<String> skipPathList = new ArrayList<>();
 
-        // Static 정보 접근 허용
-        skipPathList.add("GET,/images/**");
-        skipPathList.add("GET,/css/**");
-        skipPathList.add("GET,/basic.js");
-
-        // h2-console 허용
+//         h2-console 허용
         skipPathList.add("GET,/h2-console/**");
         skipPathList.add("POST,/h2-console/**");
 
-        // 회원 관리 API 허용
+//         회원 관리 API 허용
         skipPathList.add("GET,/user/**");
         skipPathList.add("POST,/user/signup");
         skipPathList.add("GET,/confirm-email");
         skipPathList.add("GET,/page");
+        skipPathList.add("GET,/posts");
 
         skipPathList.add("POST,/user/login");
 
         skipPathList.add("GET,/");
-        skipPathList.add("GET,/api/**");
-        skipPathList.add("GET,/write");
 
         FilterSkipMatcher matcher = new FilterSkipMatcher(skipPathList,"/**");
 

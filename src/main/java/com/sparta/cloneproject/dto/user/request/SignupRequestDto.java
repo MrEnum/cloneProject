@@ -13,14 +13,11 @@ public class SignupRequestDto {
 
     String fullName;
 
-//     @Email은 "" < 공백 허용됨
-//    @Email
-    @Pattern(regexp = "\\w+@\\w+\\.\\w+", message = "E-mail 형식이 아닙니다.")
+    @Pattern(regexp = "^[\\da-zA-Z]([-_.]?[\\da-zA-Z])*@[\\da-zA-Z]([-_.]?[\\da-zA-Z])*\\.[a-zA-Z]{2,3}$", message = "E-mail 형식이 아닙니다.")
     String userEmail;
 //    닉네임
     String userName;
 
-    @Size(min = 8, message = "최소 8자 이상 작성해주세요")
+    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$", message = "비밀번호는 8자 이상입니다.")
     String password;
-
 }

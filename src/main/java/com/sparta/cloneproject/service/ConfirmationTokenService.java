@@ -23,9 +23,11 @@ public class ConfirmationTokenService {
     public void createEmailConfirmationToken(String receiverEmail) {
 
 
+//      인증 Token 정보 DB 저장
         ConfirmationToken emailConfirmationToken = ConfirmationToken.createEmailConfirmationToken(receiverEmail);
         confirmationTokenRepository.save(emailConfirmationToken);
 
+//      Mail Message 생성
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(receiverEmail);
         mailMessage.setSubject("회원가입 이메일 인증");
