@@ -22,6 +22,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.UUID;
 
 @Service
@@ -29,18 +30,16 @@ public class KakaoService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final HttpServletResponse servletResponse;
 
     public KakaoService(
             UserRepository userRepository,
-            PasswordEncoder passwordEncoder,
-            HttpServletResponse servletResponse){
+            PasswordEncoder passwordEncoder){
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.servletResponse = servletResponse;
     }
 
-    public void kakaoLogin(String code) throws JsonProcessingException {
+    public void kakaoLogin(String code, HttpServletResponse servletResponse) throws IOException {
+
         // 1. "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getAccessToken(code);
         // 2. 토큰으로 카카오 API 호출
@@ -72,7 +71,7 @@ public class KakaoService {
     }
 
 
-    // AccessToken 발행 process
+    // AccessToken 발행 process < 1. "인가 코드"로 "액세스 토큰" 요청 >
     private String getAccessToken(String code) throws JsonProcessingException {
 
         // HTTP Header 생성
@@ -83,15 +82,15 @@ public class KakaoService {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", "366bf4df105f7d1fb0c91cb6b4faeba0");   // Rest API Key
-        body.add("redirect_uri", "http://13.125.251.80/user/signin/kakao");  // 콜백 주소 ***** 배포시 수정 필요 *****
-        body.add("code", code);
+        body.add("redirect_uri", "http://localhost:8080/user/signin/kakao");  // 콜백 주소 ***** 배포시 수정 필요 *****
+        body.add("code", code);  // 최초 카카오서버에 요청 하여 받은 코드
 
         // HTTP 요청 보내기
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
                 new HttpEntity<>(body, headers);
         RestTemplate rt = new RestTemplate();
         ResponseEntity<String> response = rt.exchange(
-                "https://kauth.kakao.com/oauth/token",
+                "https://kauth.kakao.com/oauth/token",  //요청 주소(카카오 서버)
                 HttpMethod.POST,
                 kakaoTokenRequest,
                 String.class
@@ -105,7 +104,7 @@ public class KakaoService {
     }
 
 
-    // user 정보 가져오기
+    // user 정보 가져오기  < 2. 토큰으로 카카오 API 호출 >
     private KakaoUserInfoDto getKakaoUserInfo(String accessToken) throws JsonProcessingException {
 
         HttpHeaders headers = new HttpHeaders();
@@ -124,7 +123,6 @@ public class KakaoService {
         );
 
         String responseBody = response.getBody();
-        responseBody = response.getBody();
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(responseBody);
         Long id = jsonNode.get("id").asLong();

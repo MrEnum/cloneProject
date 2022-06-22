@@ -1,4 +1,4 @@
-package com.sparta.cloneproject.dto;
+package com.sparta.cloneproject.aop.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

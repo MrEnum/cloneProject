@@ -28,16 +28,20 @@ public class Post {
     @Column
     private String imageUrl;
 
-//    @Column(nullable = false)
-//    private String fileName;
-
-
     @JoinColumn(name = "USER_ID")
     @ManyToOne
     private User user;
 
+//    @JoinColumn(name="Comment_Id")
+//    @OneToMany
+//    private List<Comment> Comment;
+
 //    @ManyToMany
 //    private List<Folder> folderList;
+
+    @Column
+    private String fileName;
+
 
     public Post(PostRequestDto postRequestDto, User user){
         this.imageUrl = postRequestDto.getImageUrl();
@@ -45,7 +49,10 @@ public class Post {
         this.description = postRequestDto.getDescription();
         this.user = user;
     }
-
-
-
+    public void update(PostRequestDto postRequestDto){
+        this.title = postRequestDto.getTitle();
+        this.imageUrl = postRequestDto.getImageUrl();
+        this.fileName = postRequestDto.getFileName();
+        this.description = postRequestDto.getDescription();
+    }
 }
