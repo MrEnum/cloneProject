@@ -38,7 +38,7 @@ public class S3Service {
     @Value("${region}")
     private String region;//지역설정
 
-    @Value("${Bucket}")
+    @Value("${bucket}")
     private String bucket;
 
     @PostConstruct
